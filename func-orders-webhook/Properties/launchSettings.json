@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "func_orders_webhook": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7139",
+      "launchBrowser": false
+    }
+  }
+}
