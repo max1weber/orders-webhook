@@ -1,8 +1,10 @@
 using System.Net;
+using func_orders_webhook.entity;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace func_orders_webhook
 {
@@ -17,25 +19,26 @@ namespace func_orders_webhook
 
         [Function("orderwebhook")]
         [ServiceBusOutput("shopify_webhooks_orders", ServiceBusEntityType.Topic, Connection = "ServicebusConnectionString")]
-        public async Task<string> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req)
+        public async Task<object> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "ordersbwebhook")] HttpRequestData req)
         
         {
 
 
             _logger.LogInformation("Webhook processed a request.");
-            string response = string.Empty;
+            HttpResponseData response;
 
             try
             {
-                response = await new StreamReader(req.Body).ReadToEndAsync();
+                string requestbody = await new StreamReader(req.Body).ReadToEndAsync();
 
+                return requestbody;
                 
             }
             catch (Exception ex)
             {
 
                 _logger.LogError($"Exception thrown: {ex.Message}");
-             
+                response = req.CreateResponse(HttpStatusCode.InternalServerError);
             }
             return response;
 
